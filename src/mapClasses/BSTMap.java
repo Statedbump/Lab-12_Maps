@@ -11,7 +11,7 @@ import interfaces.Map;
 public class BSTMap<K, V> implements Map<K, V> {
 	// the binary search tree supporting this implementation of the map
 	private LinkedBST<Entry<K, V>> tree;   	
-	
+
 	/**
 	 * Creates an instance of BSTMap. 
 	 * @param cmp the comparator of keys that is received and which shall
@@ -31,7 +31,7 @@ public class BSTMap<K, V> implements Map<K, V> {
 	public BSTMap(Comparator<K> cmp) { 
 		tree = new LinkedBST<>(new EntryComparator<K, V>(cmp)); 
 	}
-	
+
 	@Override
 	/**
 	 * the size of the map is the size of the tree. 
@@ -85,7 +85,13 @@ public class BSTMap<K, V> implements Map<K, V> {
 		// invoking operations from the BSTLinkedBinaryTree, applying 
 		// them to instance field tree.... EXERCISE 1
 		//...
-		return null;    // for the moment...
+
+		Position<Entry<K, V>> p = tree.getPosition(new MapEntry<>(key, null)); 
+		if (p!= null) 
+			return ((MapEntry<K, V>) p.getElement()).setValue(value); 
+		else
+			tree.addElement(new MapEntry<>(key, value));
+		return value;
 	}
 
 
@@ -98,7 +104,13 @@ public class BSTMap<K, V> implements Map<K, V> {
 		// invoking operations from the BSTLinkedBinaryTree, appying 
 		// them to instance field tree.... EXERCISE 1
 		//...
-		return null;    // for the moment...
+		
+		Entry<K, V> e = tree.removeElement(new MapEntry<K, V>(key, null)); 
+	
+		if (e != null)
+				return e.getValue();
+		
+		return null; 
 	}
 
 
@@ -109,7 +121,10 @@ public class BSTMap<K, V> implements Map<K, V> {
 		// them to instance field tree.... In this case you will need another
 		// inner class......   EXERCISE 2
 		//...
-		return null;    // for the moment...
+		ArrayList<K> set = new ArrayList<>(); 
+		for (Entry<K, V> e : entrySet())
+			set.add(e.getKey()); 
+		return set; 
 	}
 
 
@@ -120,7 +135,12 @@ public class BSTMap<K, V> implements Map<K, V> {
 		// them to instance field tree.... In this case you will need another
 		// inner class......  EXERCISE 2
 		//...
-		return null;    // for the moment...
+		ArrayList<V> valueList = new ArrayList<>(); 
+
+		for (Position<Entry<K, V>> p : tree.positions())
+			valueList.add(p.getElement().getValue()); 
+
+		return valueList;
 	}
 
 	@Override
@@ -137,7 +157,7 @@ public class BSTMap<K, V> implements Map<K, V> {
 		this.tree.display();
 	}
 
-	
+
 	/**
 	 * The following class is an implementation of a Comparator that is to be
 	 * used to compare entries. it is based on a comparator of keys. The 
@@ -162,7 +182,7 @@ public class BSTMap<K, V> implements Map<K, V> {
 			return keyComparator.compare(e1.getKey(), e2.getKey()); 
 		}
 	}
-	
+
 	/**
 	 * Class for an implementation of Entry<K, V> 
 	 * @author pedroirivera-vega
@@ -173,12 +193,12 @@ public class BSTMap<K, V> implements Map<K, V> {
 	private static class MapEntry<K, V> implements Entry<K, V> {
 		private K key; 
 		private V value; 
-		
+
 		public MapEntry(K key, V value) { 
 			this.key = key; 
 			this.value = value; 
 		}
-		
+
 		@Override
 		public K getKey() {
 			return key;
@@ -188,16 +208,16 @@ public class BSTMap<K, V> implements Map<K, V> {
 		public V getValue() {
 			return value;
 		} 
-		
+
 		public V setValue(V value) { 
 			V old = this.value; 
 			this.value = value; 
 			return old; 
 		}
-		
+
 		public String toString() { 
 			return "[" + key + ", " + value +"]"; 
 		}
 	}
-	
+
 }
